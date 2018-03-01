@@ -1,0 +1,79 @@
+#include <Wire.h>
+#include <WireKinetis.h>
+
+
+int PIR_output=2; // output of pir sensor
+void setup()
+{
+Serial.begin(9600);//serial communication between arduino and pc
+Wire.begin(2);
+Serial.println("===========================");
+Serial.println("|Beginning 12C Connections|");
+Serial.println("===========================");
+Serial.println("Please wait");
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println(".");
+delay(500);
+Serial.println("===========");
+Serial.println("|COMPLETE!|");
+Serial.println("===========");
+Wire.beginTransmission(1);
+Wire.write('9');
+Wire.endTransmission(1);
+pinMode(PIR_output, INPUT);// setting pir output as arduino input
+}
+void loop() 
+{
+if(digitalRead(2) == HIGH) 
+{
+  Wire.beginTransmission(1);
+  Wire.write('1');
+  Wire.endTransmission(1);
+  Serial.println("MOTION DETECTED! TRANSMITTING!!!!!!!!!");
+}
+}
