@@ -1,0 +1,103 @@
+#include <Keypad.h>
+
+#include <Wire.h>
+int led_pin = 12;
+int led_pin1 = 13;
+
+#define Password_Lenght 5// Give enough room for six chars + NULL char
+
+char Data[Password_Lenght];// 4 is the number of chars it can hold + the null char = 5
+char Master[Password_Lenght] = "0000";// The 4 digit code to arm the system
+char MASACT[Password_Lenght1] = "1234";//The 4 digit code to re-arm the system
+byte data_count = 0, master_count = 0;
+bool Pass_is_good;
+char customKey;
+int is_armed = '1';
+
+const byte ROWS = 4;
+const byte COLS = 3;
+char keys[ROWS][COLS] = {
+  {'1','2','3'},
+  {'4','5','6'},
+  {'7','8','9'},
+  {'*','0','#'}
+};
+
+byte rowPins[ROWS] = {
+  5,4,3,2}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {
+  8,7,6}; //connect to the column pinouts of the keypad
+
+Keypad customKeypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS); //initialize an instance of class NewKeypad
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println("MASTER REPORTING");
+  Wire.begin(1); 
+  Wire.onReceive(receiveEvent);  
+}
+
+void loop()
+{
+
+
+  customKey = customKeypad.getKey();
+  if (customKey) // makes sure a key is actually pressed, equal to (customKey != NO_KEY)
+  {
+    Data[data_count] = customKey; // store char into data array
+    
+    data_count++; // increment data array by 1 to store new char, also keep track of the number of chars entered
+  }
+
+  if(data_count == Password_Lenght-1) // if the array index is equal to the number of expected chars, compare data to master
+  {
+
+    if(!strcmp(Data, Master))// equal to (strcmp(Data, Master) == 0)
+      {
+      Serial.println("GOOD");
+      int is_armed = '0';
+      Wire.end();
+      Serial.println("12C COMMS ENDED");
+      // Put any actions you want to run when the disarming code is entered
+      }
+    
+    if(!strcmp(Data, MASACT))// equal to (strcmp(Data, Master) == 0)
+    {
+      Serial.println("REARMING....");
+      int is_armed = '1';
+      Wire.begin(1);
+      Serial.println("12C COMMS ACTIVE");
+      digitalWrite(led_pin1, HIGH);
+      // Put any actions you want to run when the arming code is entered
+    }
+    delay(1000);// added 1 second delay to make sure the password is completely shown on screen before it gets cleared.
+    clearData();   
+  }
+}
+
+void clearData()
+{
+  while(data_count !=0)
+  {   // This can be used for any array size, 
+    Data[data_count--] = 0; //clear array for new data
+  }
+  return;
+}
+
+
+void receiveEvent(int howMany)
+{
+  
+  char inChar;
+  
+  while(Wire.available() > 0)
+  {
+    inChar = Wire.read();  
+    Serial.println(inChar);
+    
+    if (inChar == '1');
+    {
+      Serial.println("MOTION DETECTED");
+    }
+    }
+  }
